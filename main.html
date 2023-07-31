@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu with Changing Data</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.data-container {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <button id="homeButton">Home</button>
+        <button id="menuButton">Menu</button>
+        <button id="aboutButton">About</button>
+        <button id="courseButton">Course</button>
+    </div>
+    <div class="data-container">
+        <p id="data">Home Data</p>
+    </div>
+   <script>
+    const dataParagraph = document.getElementById('data');
+const homeButton = document.getElementById('homeButton');
+const menuButton = document.getElementById('menuButton');
+const aboutButton = document.getElementById('aboutButton');
+const courseButton = document.getElementById('courseButton');
+
+// Data for each menu item
+const menuData = {
+    home: 'Home Data',
+    menu: 'Menu Data',
+    about: 'About Data',
+    course: 'Course Data',
+};
+
+// Function to change the data based on the button clicked
+function changeData(menuItem) {
+    dataParagraph.textContent = menuData[menuItem];
+}
+
+// Event listeners for each button click
+homeButton.addEventListener('click', () => changeData('home'));
+menuButton.addEventListener('click', () => changeData('menu'));
+aboutButton.addEventListener('click', () => changeData('about'));
+courseButton.addEventListener('click', () => changeData('course'));
+
+// Initial data display (Home data by default)
+dataParagraph.textContent = menuData.home;
+
+   </script>
+</body>
+</html>
