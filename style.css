@@ -1,6 +1,7 @@
 :root{
     --color-white:#FFFFFF;;
     --color-black:#030303; 
+    --color-brown:#E2E5E7;
 }
 *{
     margin: 0;
@@ -137,6 +138,9 @@ h3{
     justify-content: space-between;
     font-size: 22px;
 }
+.onclick_data ul li{
+    cursor: pointer;
+}
 .onclick_shape{
     border: 0px solid red;
     padding-top: 20px;
@@ -148,4 +152,27 @@ h3{
 }
 .onclick_row1{
     width: 50%;
+}
+.onclick_row h1{
+   font-size: 40px;
+}
+.onclick_row h3{
+    font-size: 25px;
+   
+ }
+ .onclick_row p{
+    font-size: 20px;
+    width: 80%;
+    border: 0px solid red;
+ }
+.change_sec{
+    background-color: var(--color-brown);   
+}
+.change_sec .onclick_data{
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+.data_onclick{
+    padding-top: 30px;
+    padding-bottom: 30px;
 }
