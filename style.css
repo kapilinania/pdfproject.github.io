@@ -99,7 +99,7 @@ h3{
     padding-bottom: 30px;
     padding-top: 20px;
 }
-.grid-item:nth-child(1){
+/* .grid-item:nth-child(1){
     background-color: #f7fcff;
 }
 .grid-item:nth-child(2){
@@ -116,15 +116,32 @@ h3{
 }
 .grid-item:nth-child(6){
     background-color: #fef3ee;
-}
+} */
 
 
 .middle_img{
-    width: 80%;
+    width: 50%;
     margin: auto;
     display: flex;
     justify-content: space-between;
     padding-top: 50px;
+    position: relative;
+}
+.middle_img .middle_img_in1 img{
+    position: absolute;
+    left: 50px;
+    top: 40px;
+    width: 70px;
+    height: 70px ;
+}
+.middle_img .middle_img_in2 img{
+    position: absolute;
+    left: 40px;
+    top: 35px;
+    width: 40px;
+    height: 40px;
+    z-index: 999;
+    
 }
 .middle_img .middle_img_in img{
     width: 70px;
