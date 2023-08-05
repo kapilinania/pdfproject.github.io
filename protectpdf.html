@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Protection Tool</title>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+    <h1>PDF Protection Tool</h1>
+    <input type="file" id="fileInput">
+    <br>
+    <input type="password" id="passwordInput" placeholder="Enter Password">
+    <button onclick="protectPDF()">Protect Now</button>
+
+    <script>
+        async function protectPDF() {
+            const fileInput = document.getElementById("fileInput");
+            const passwordInput = document.getElementById("passwordInput");
+
+            if (fileInput.files.length === 0) {
+                alert("Please select a PDF file first.");
+                return;
+            }
+
+            if (!passwordInput.value) {
+                alert("Please enter a password.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const password = passwordInput.value;
+
+            const reader = new FileReader();
+
+            reader.onload = async () => {
+                try {
+                    const pdfData = new Uint8Array(reader.result);
+                    const pdfDoc = await PDFLib.PDFDocument.load(pdfData);
+
+                    // Encrypt the PDF with the provided password
+                    pdfDoc.encrypt(password);
+
+                    const pdfBytes = await pdfDoc.save();
+
+                    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = "protected_pdf.pdf";
+                    link.click();
+                } catch (error) {
+                    alert("Failed to protect the PDF. Please try again.");
+                    console.error(error);
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>

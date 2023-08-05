@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Split PDF</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="container">
+      <div class="row mt-4">
+        <h1 class="text-center">Split PDF</h1>
+        <p class="text-center jpgpng_text">Split PDF completely free</p>
+      </div>
+
+      <div class="row mt-4">
+        <label for="pdfFileInput" class="btn button_all"> + ADD FILE</label>
+        <input type="file" id="pdfFileInput" accept=".pdf" style="display: none;" />
+      </div>
+      <span id="fileName" class="text-center"></span>
+
+      <div class="row mt-4">
+        <div class="col-md-6 text-center">
+          <label for="fromPage">From Page:</label>
+          <input type="number" id="fromPage" min="1" />
+        </div>
+        <div class="col-md-6">
+          <label for="toPage">To Page:</label>
+          <input type="number" id="toPage" min="1" />
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <button id="splitBtn" class="btn button_all mt-3 mx-auto d-block" onclick="splitPDF()">Split PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.4.0/dist/pdf-lib.min.js"></script>
+  <script>
+    function splitPDF() {
+      const fileInput = document.getElementById("pdfFileInput");
+      const fromPageInput = document.getElementById("fromPage");
+      const toPageInput = document.getElementById("toPage");
+
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Please select a PDF file.");
+        return;
+      }
+
+      const fromPage = parseInt(fromPageInput.value);
+      const toPage = parseInt(toPageInput.value);
+
+      if (isNaN(fromPage) || isNaN(toPage) || fromPage < 1 || toPage < 1 || fromPage > toPage) {
+        alert("Invalid page range.");
+        return;
+      }
+
+      const fileReader = new FileReader();
+      fileReader.onload = function (event) {
+        const arrayBuffer = event.target.result;
+        splitAndDownloadPDF(arrayBuffer, fromPage, toPage);
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    async function splitAndDownloadPDF(arrayBuffer, fromPage, toPage) {
+      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+      const totalPages = pdfDoc.getPages().length;
+
+      if (toPage > totalPages) {
+        alert("Invalid page range: The PDF has only " + totalPages + " pages.");
+        return;
+      }
+
+      const pagesToKeep = [];
+      for (let pageNum = fromPage; pageNum <= toPage; pageNum++) {
+        pagesToKeep.push(pageNum);
+      }
+
+      const newPdfDoc = await PDFLib.PDFDocument.create();
+      const copiedPages = await newPdfDoc.copyPages(pdfDoc, pagesToKeep);
+
+      for (const page of copiedPages) {
+        newPdfDoc.addPage(page);
+      }
+
+      const newPdfBytes = await newPdfDoc.save();
+
+      const blob = new Blob([newPdfBytes], { type: "application/pdf" });
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = "split.pdf";
+      downloadLink.click();
+
+      URL.revokeObjectURL(downloadLink.href);
+    }
+
+    // Update the file name display
+    document.getElementById("pdfFileInput").addEventListener("change", function (event) {
+      const fileInput = event.target;
+      const fileNameSpan = document.getElementById("fileName");
+      if (fileInput.files.length > 0) {
+        fileNameSpan.textContent = "Selected file: " + fileInput.files[0].name;
+      } else {
+        fileNameSpan.textContent = "";
+      }
+    });
+
+  </script>
+</body>
+
+</html>

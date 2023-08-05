@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Resize Image</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .container {
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+        }
+
+        /* Additional styling for the file input button */
+        .row.file-input-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .img-container {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+
+        .bg-white {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="container">
+            <div class="row mt-4">
+                <h1 class="text-center">Resize Image</h1>
+                <p class="text-center jpgpng_text">The best way to resize image without losing quality online.</p>
+            </div>
+
+            <div class="row mt-4">
+                <label for="fileInput" class="btn button_all"> + ADD FILE</label>
+                <input type="file" id="fileInput" style="display: none;" onchange="handleFileChange(event)">
+            </div>
+
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-6 mt-4">
+                    <div class="img-container" id="imagePreview">
+                        <!-- The uploaded and resized image will be shown here -->
+                    </div>
+                </div>
+                <div class="col-6 mt-4 bg-white">
+                    <div class="row mt-2" id="imageControls" style="display: none;">
+                        <div class="col-md-12 mt-3">
+                            <h3 class="text-center">Resize image</h3>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="widthInput">Width (pixels):</label>
+                            <input type="number" id="widthInput" class="form-control mt-2"
+                                placeholder="Enter width in pixels" value="500">
+                        </div>
+                        <div class="col-md-12">
+                            <label for="heightInput">Height (pixels):</label>
+                            <input type="number" id="heightInput" class="form-control mt-2"
+                                placeholder="Enter height in pixels" value="500">
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <div class="input-group">
+                                <span class="input-group-text">Image Size:</span>
+                                <span class="form-control" id="imageSize">500 KB</span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <button id="downloadButton" class="btn btn-primary w-100"
+                                onclick="downloadResizedImage()">Download Now</button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+    <script>
+
+        function handleFileChange(event) {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+
+            // Check if a file was selected
+            if (file) {
+                const reader = new FileReader();
+
+                // Read the file and display the preview
+                reader.onload = function () {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.innerHTML = `<img src="${reader.result}" class="img-fluid" alt="Uploaded Image" id="previewImage">`;
+
+                    // After loading the image, get its size and update the input fields
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.onload = function () {
+                        const widthInput = document.getElementById('widthInput');
+                        const heightInput = document.getElementById('heightInput');
+                        const imageSize = (file.size / 1024).toFixed(2); // Calculate size in KB
+                        widthInput.value = previewImage.width;
+                        heightInput.value = previewImage.height;
+                        document.getElementById('imageSize').textContent = `${imageSize} KB`;
+                    };
+                };
+
+                reader.readAsDataURL(file);
+
+                // Show the width, height, and download button
+                const imageControls = document.getElementById('imageControls');
+                imageControls.style.display = 'block';
+            }
+        }
+
+        // Function to resize the image based on user input
+        function resizeImage() {
+            const widthInput = parseInt(document.getElementById('widthInput').value);
+            const heightInput = parseInt(document.getElementById('heightInput').value);
+            const imagePreview = document.getElementById('previewImage');
+
+            if (imagePreview && widthInput && heightInput) {
+                imagePreview.style.width = `${widthInput}px`;
+                imagePreview.style.height = `${heightInput}px`;
+
+                // Calculate the updated image size
+                const imageSize = (widthInput * heightInput * 3 / 1024).toFixed(2); // Assuming 3 bytes per pixel (RGB image)
+                document.getElementById('imageSize').textContent = `${imageSize} KB`;
+            }
+        }
+
+        // Function to download the resized image
+        function downloadResizedImage() {
+            const imagePreview = document.getElementById('imagePreview').querySelector('img');
+            if (imagePreview) {
+                    const downloadLink = document.createElement('a');
+                downloadLink.href = imagePreview.src;
+                downloadLink.download = 'resized_image.jpg';
+                downloadLink.click();
+            }
+        }
+
+        // Add event listeners
+        document.getElementById('widthInput').addEventListener('input', resizeImage);
+        document.getElementById('heightInput').addEventListener('input', resizeImage);
+    </script>
+</body>
+
+</html> 

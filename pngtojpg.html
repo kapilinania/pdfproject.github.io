@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  <style>
+     .showImg {
+            display: block;
+            margin: 0 auto;
+            max-width: 530px;
+            min-height: 200px;
+            background: #ffffff;
+            border-radius: 5px;
+        }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="container">
+      <div class="row mt-4">
+        <h1 class="text-center">PNG to JPG Converter</h1>
+        <p class="text-center jpgpng_text">The best way to resize image without losing quality online.</p>
+      </div>
+
+      <div class="row mt-4">
+        <label for="fileInput" class="btn button_all"> + ADD FILE</label>
+        <input type="file" id="fileInput" style="display: none;" accept=".png" />
+      </div>
+
+      <div class="row mt-4" id="resultContainer" style="display: none;">
+        <h3 class="text-center">Converted Image:</h3>
+        <img id="convertedImg" class="img-thumbnail mx-auto d-block showImg" alt="Converted Image" />
+        <a id="downloadBtn" class="btn button_all mt-3 mx-auto d-block" download="converted.jpg">Download JPG</a>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const resultContainer = document.getElementById('resultContainer');
+    const convertedImg = document.getElementById('convertedImg');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+
+      if (file && file.type === 'image/png') {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const imgSrc = e.target.result;
+          convertToJpg(imgSrc);
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please select a valid PNG file.');
+      }
+    }
+
+    function convertToJpg(pngImgSrc) {
+      const img = new Image();
+      img.src = pngImgSrc;
+
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        const jpgImgSrc = canvas.toDataURL('image/jpeg');
+
+        displayConvertedImg(jpgImgSrc);
+      };
+    }
+
+    function displayConvertedImg(jpgImgSrc) {
+      convertedImg.src = jpgImgSrc;
+      resultContainer.style.display = 'block';
+      downloadBtn.href = jpgImgSrc;
+      downloadBtn.addEventListener('click', handleDownload);
+    }
+
+    function handleDownload() {
+      // Wait a bit before reloading the page to give the browser time to start the download.
+      setTimeout(function () {
+        window.location.reload();
+      }, 100);
+    }
+  </script>
+
+
+</body>
+
+</html>
